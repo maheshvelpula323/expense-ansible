@@ -59,7 +59,7 @@
         login_host: 172.31.87.93
 
     - name: Start Backend Service
-      ansible.builtin.systemd.service:
+      ansible.builtin.systemd_service:
         name: backend
         state: restarted
         enabled: yes
