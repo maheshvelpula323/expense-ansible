@@ -2,12 +2,12 @@
   ansible.builtin.shell: dnf module disable nodejs -y
 
 - name: Enable NodeJS module for V20
-  ansible.builtin.shell: dnf module enable nodejs:20 -y
+  ansible.builtin.shell: dnf module disable nodejs -y
 
 - name: Install NodeJS
   ansible.builtin.dnf:
     name: nodejs
-    state: latest
+    state: installed
 
 - name: Adding Application User
   ansible.builtin.user:
@@ -23,15 +23,10 @@
     path: /app
     state: latest
 
-- name: Copy Backend Service
-  ansible.builtin.copy:
+- name: Copy Backend Service file
+  ansible.builtin.template:
     src: backend.service
     dest: /etc/systemd/system/backend.service
-
-- name: Install MySQL
-  ansible.builtin.dnf:
-    name: mysql
-    state: installed
 
 - name: Install Python MySQL Client
   ansible.builtin.pip:
@@ -40,6 +35,11 @@
       - cryptography
     executable: pip3.9
 
+- name: Install MySQL Client
+  ansible.builtin.dnf:
+    name: mysql
+    state: installed
+
 - name: Load Schema
   community.mysql.mysql_db:
     state: import
@@ -47,7 +47,7 @@
     target: /app/schema/backend.sql
     login_user: root
     login_password: ExpenseApp@1
-    login_host: mysql-dev.mvshop.xyz
+    login_host: mysql-dev.rdevops6a.online
 
 - name: Start Backend Service
   ansible.builtin.systemd_service:
